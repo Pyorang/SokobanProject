@@ -9,14 +9,15 @@ namespace SokobanGame
     class Program
     {
         static bool gameOver;
-
-        static Player player;
-        static Box[] box;
-        static Wall[] wall;
-        static Goal[] goal;
-        static Warp[] warp;
-        static ItemInfo[] itemInfo;
-        static Item item;
+        static bool finalStage;
+        static int currentStageNum;
+        static Player? player;
+        static List<Box>? box;
+        static List<Wall>? wall;
+        static List<Goal>? goal;
+        static List<Warp>? warp;
+        static List<ItemInfo>? itemInfo;
+        static List<Item>? item;
 
         static void Main()
         {
@@ -36,20 +37,40 @@ namespace SokobanGame
             Console.Clear();
 
             gameOver = false;
+            currentStageNum = 1;
 
-            player = new Player(5, 5);
+            itemInfo = GetItemInfo();
+            SetCurrentStage(itemInfo, currentStageNum);
+        }
 
-            box = new Box[5] { new Box(4, 8), new Box(8, 8), new Box(12, 8), new Box(16, 8), new Box(20, 8) };
+        static void SetCurrentStage(List<ItemInfo> itemInfo, int currentStageNum)
+        {
+            Stage currentStage = new Stage(currentStageNum, itemInfo);
 
-            wall = new Wall[5] { new Wall(4, 11), new Wall(8, 11), new Wall(12, 11), new Wall(16, 11), new Wall(20, 11) };
+            finalStage = currentStage.finalStage;
+            player = currentStage.player;
+            box = currentStage.box;
+            wall = currentStage.wall;
+            goal = currentStage.goal;
+            warp = currentStage.warp;
+            item = currentStage.item;
+        }
 
-            goal = new Goal[5] { new Goal(4, 14), new Goal(8, 14), new Goal(12, 14), new Goal(16, 14), new Goal(20, 14) };
+        static List<ItemInfo> GetItemInfo()
+        {
+            List<ItemInfo> itemInfo = new List<ItemInfo>();
 
-            warp = new Warp[2] { new Warp(3, 3, 3, 5), new Warp(7, 6, 8, 10) };
+            string fileName = "ItemInfo.txt";
+            string[] contents = File.ReadAllLines(fileName);
 
-            itemInfo = new ItemInfo[3] { new ItemInfo("Rare", 70), new ItemInfo("UltraRare", 20), new ItemInfo("Legend", 10)};
+            foreach (string line in contents)
+            {
+                string[] parts = line.Split(',');
 
-            item = new Item(5, 7, itemInfo);
+                itemInfo.Add(new ItemInfo(parts[1], int.Parse(parts[2])));
+            }
+
+            return itemInfo;
         }
 
         static void RenderGameScreen()
@@ -72,7 +93,7 @@ namespace SokobanGame
 
         static void PrintBox()
         {
-            for(int i = 0; i <  box.Length; i++)
+            for(int i = 0; i <  box.Count; i++)
             {
                 Console.SetCursorPosition(box[i].boxX, box[i].boxY);
                 Console.Write("B");
@@ -81,7 +102,7 @@ namespace SokobanGame
 
         static void PrintWall()
         {
-            for (int i = 0; i < wall.Length; i++)
+            for (int i = 0; i < wall.Count; i++)
             {
                 Console.SetCursorPosition(wall[i].wallX, wall[i].wallY);
                 Console.Write("W");
@@ -90,7 +111,7 @@ namespace SokobanGame
 
         static void PrintGoal()
         {
-            for (int i = 0; i < goal.Length; i++)
+            for (int i = 0; i < goal.Count; i++)
             {
                 if (goal[i].inputBox)
                 {
@@ -107,7 +128,7 @@ namespace SokobanGame
 
         static void PrintWarp()
         {
-            for (int i = 0; i < warp.Length; i++)
+            for (int i = 0; i < warp.Count; i++)
             {
                 Console.SetCursorPosition(warp[i].headX, warp[i].headY);
                 Console.Write("H");
@@ -118,9 +139,9 @@ namespace SokobanGame
 
         static void PrintItem()
         {
-            if(item != null)
+            for(int i = 0; i < item.Count; i++)
             {
-                Console.SetCursorPosition(item.itemX, item.itemY);
+                Console.SetCursorPosition(item[i].itemX, item[i].itemY);
                 Console.Write("I");
             }
         }
@@ -165,7 +186,7 @@ namespace SokobanGame
 
         static void ProcessBoxMove(ConsoleKeyInfo currentkeyInfo)
         {
-            for (int i = 0; i < box.Length; i++)
+            for (int i = 0; i < box.Count; i++)
             {
                 if(player.playerX == box[i].boxX && player.playerY == box[i].boxY)
                 {
@@ -176,7 +197,7 @@ namespace SokobanGame
 
         static void ChangeBoxState(ConsoleKeyInfo currentKeyInfo)
         {
-            for (int i = 0; i < box.Length; i++)
+            for (int i = 0; i < box.Count; i++)
             {
                 ChangeBoxTempLocation(i, currentKeyInfo);
                 WarpBox(i, currentKeyInfo);
@@ -186,7 +207,7 @@ namespace SokobanGame
 
         static void WarpBox(int boxIndex, ConsoleKeyInfo currentKeyInfo)
         {
-            for (int i = 0; i < warp.Length; i++)
+            for (int i = 0; i < warp.Count; i++)
             {
                 if (box[boxIndex].moveData.tempLocationX == warp[i].headX && box[boxIndex].moveData.tempLocationY == warp[i].headY)
                 {
@@ -224,9 +245,9 @@ namespace SokobanGame
             int boxInGoalCount = 0;
 
             //골 갯수와 박스 위치 비교하여 지역변수 증가
-            for(int i = 0; i < goal.Length; i++)
+            for(int i = 0; i < goal.Count; i++)
             {
-                for(int j = 0; j< box.Length; j++)
+                for(int j = 0; j< box.Count; j++)
                 {
                     if (goal[i].goalX == box[j].boxX && goal[i].goalY == box[j].boxY)
                     {
@@ -236,8 +257,16 @@ namespace SokobanGame
                 }
             }
 
-            if (boxInGoalCount == goal.Length)
-                gameOver = true;
+            if (boxInGoalCount == goal.Count)
+            {
+                if(finalStage)
+                    gameOver = true;
+                else
+                {
+                    currentStageNum++;
+                    SetCurrentStage(itemInfo, currentStageNum);
+                }
+            }
         }
 
         static void InitializeMoveData()
@@ -253,7 +282,7 @@ namespace SokobanGame
 
         static void InitializeBoxMoveData()
         {
-            for(int i = 0; i < box.Length; i++)
+            for(int i = 0; i < box.Count; i++)
                 box[i].InitializeMoveData();
         }
 

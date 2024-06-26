@@ -29,31 +29,31 @@ namespace SokobanGame
             if (moveData.tempLocationX < 0 || moveData.tempLocationY < 0 || moveData.tempLocationX > Console.BufferWidth || moveData.tempLocationY > Console.BufferHeight)
                 moveData.ApplyLocation = false;
         }
-        public void CheckBoxNextBox(Box[] box)
+        public void CheckBoxNextBox(List<Box> box)
         {
-            for (int i = 0; i < box.Length; i++)
+            for (int i = 0; i < box.Count; i++)
             {
                 if (moveData.tempLocationX == box[i].boxX && moveData.tempLocationY == box[i].boxY)
                     moveData.ApplyLocation = false;
             }
         }
-        public void CheckBoxNextWall(Wall[] wall)
+        public void CheckBoxNextWall(List<Wall> wall)
         {
-            for (int i = 0; i < wall.Length; i++)
+            for (int i = 0; i < wall.Count; i++)
             {
                 if (moveData.tempLocationX == wall[i].wallX && moveData.tempLocationY == wall[i].wallY)
                     moveData.ApplyLocation = false;
             }
         }
-        public void CheckBoxNextWarpTale(Warp[] warp)
+        public void CheckBoxNextWarpTale(List<Warp> warp)
         {
-            for (int i = 0; i < warp.Length; i++)
+            for (int i = 0; i < warp.Count; i++)
             {
                 if (moveData.tempLocationX == warp[i].taleX && moveData.tempLocationY == warp[i].taleY)
                     moveData.ApplyLocation = false;
             }
         }
-        public void CheckBoxRouteBlocked(Box[] box, Wall[] wall, Warp[] warp)
+        public void CheckBoxRouteBlocked(List<Box> box, List<Wall> wall, List<Warp> warp)
         {
             CheckBoxBoundaryException();
             CheckBoxNextBox(box);

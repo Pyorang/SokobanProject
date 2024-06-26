@@ -10,9 +10,9 @@ namespace SokobanGame
     {
         public int itemX;
         public int itemY;
-        public ItemInfo[] infoList;
+        public List<ItemInfo> infoList;
 
-        public Item(int itemX, int itemY, ItemInfo[] infoList)
+        public Item(int itemX, int itemY, List<ItemInfo> infoList)
         {
             this.itemX = itemX;
             this.itemY = itemY;
@@ -24,7 +24,7 @@ namespace SokobanGame
             int selectedNumber = SelectRandomNumber(totalWeight);
 
             int weight = 0;
-            for (int i = 0; i < infoList.Length; i++)
+            for (int i = 0; i < infoList.Count; i++)
             {
                 weight += infoList[i].weight;
                 if (selectedNumber <= weight)
@@ -37,7 +37,7 @@ namespace SokobanGame
         {
             int totalWeight = 0;
 
-            for (int i = 0; i < infoList.Length; i++)
+            for (int i = 0; i < infoList.Count; i++)
             {
                 totalWeight += infoList[i].weight;
             }

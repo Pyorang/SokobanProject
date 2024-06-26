@@ -46,9 +46,9 @@ namespace SokobanGame
                     break;
             }
         }
-        public void WarpPlayer(ConsoleKeyInfo currentKeyInfo, Warp[] warp)
+        public void WarpPlayer(ConsoleKeyInfo currentKeyInfo, List<Warp> warp)
         {
-            for (int i = 0; i < warp.Length; i++)
+            for (int i = 0; i < warp.Count; i++)
             {
                 if (moveData.tempLocationX == warp[i].headX && moveData.tempLocationY == warp[i].headY)
                 {
@@ -63,9 +63,9 @@ namespace SokobanGame
             if (moveData.tempLocationX < 0 || moveData.tempLocationY < 0 || moveData.tempLocationX > Console.BufferWidth || moveData.tempLocationY > Console.BufferHeight)
                 moveData.ApplyLocation = false;
         }
-        public void HandleBoxContact(Box[] box)
+        public void HandleBoxContact(List<Box> box)
         {
-            for (int i = 0; i < box.Length; i++)
+            for (int i = 0; i < box.Count; i++)
             {
                 if (moveData.tempLocationX == box[i].boxX && moveData.tempLocationY == box[i].boxY)
                 {
@@ -74,9 +74,9 @@ namespace SokobanGame
                 }
             }
         }
-        public void HandleWallContact(Wall[] wall)
+        public void HandleWallContact(List<Wall> wall)
         {
-            for (int i = 0; i < wall.Length; i++)
+            for (int i = 0; i < wall.Count; i++)
             {
                 if (moveData.tempLocationX == wall[i].wallX && moveData.tempLocationY == wall[i].wallY)
                 {
@@ -84,9 +84,9 @@ namespace SokobanGame
                 }
             }
         }
-        public void HandleGoalContact(Goal[] goal)
+        public void HandleGoalContact(List<Goal> goal)
         {
-            for (int i = 0; i < goal.Length; i++)
+            for (int i = 0; i < goal.Count; i++)
             {
                 if (moveData.tempLocationX == goal[i].goalX && moveData.tempLocationY == goal[i].goalY)
                 {
@@ -94,9 +94,9 @@ namespace SokobanGame
                 }
             }
         }
-        public void HandleWarpTaleContact(Warp[] warp)
+        public void HandleWarpTaleContact(List<Warp> warp)
         {
-            for (int i = 0; i < warp.Length; i++)
+            for (int i = 0; i < warp.Count; i++)
             {
                 if (moveData.tempLocationX == warp[i].taleX && moveData.tempLocationY == warp[i].taleY)
                 {
@@ -104,15 +104,15 @@ namespace SokobanGame
                 }
             }
         }
-        public void HandleItemContact(Item item)
+        public void HandleItemContact(List<Item> item)
         {
-            if (item != null)
+            for(int i = 0; i< item.Count; i++)
             {
-                if (moveData.tempLocationX == item.itemX && moveData.tempLocationY == item.itemY)
+                if (moveData.tempLocationX == item[i].itemX && moveData.tempLocationY == item[i].itemY)
                 {
-                    ItemInfo gotchaResult = item.Gotcha();
-                    ChangeSkin(item.GetPlayerSkin(gotchaResult));
-                    item = null;
+                    ItemInfo gotchaResult = item[i].Gotcha();
+                    ChangeSkin(item[i].GetPlayerSkin(gotchaResult));
+                    item.Remove(item[i]);
                 }
             }
         }
