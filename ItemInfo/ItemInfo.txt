@@ -1,0 +1,3 @@
+ItemInfo,Rare,70
+ItemInfo,UltraRare,20
+ItemInfo,Legend,10

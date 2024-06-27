@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /s /y &quot;..\MapFile\*&quot; &quot;..\SokobanGame\bin\Debug\net6.0\&quot;&#xD;&#xA;xcopy /s /y &quot;..\ItemInfo\*&quot; &quot;..\SokobanGame\bin\Debug\net6.0\&quot;&#xD;&#xA;" />
+  </Target>
+
 </Project>
